@@ -265,14 +265,26 @@
         label: lang['nav-sort-alphabetic']
       },
       {
+        by: 'alphabetic_desc',
+        icon: 'sort-alpha-up',
+        label: lang['nav-sort-alphabetic']
+      },
+      {
+        by: 'time_desc',
+        icon: 'sort-numeric-up',
+        label: lang['nav-sort-time']
+      },
+      {
         by: 'time',
         icon: 'sort-numeric-down',
         label: lang['nav-sort-time']
       }
     ];
   </script>
+  <script>{!! \File::get(base_path('vendor/unisharp/laravel-filemanager/public/js/clipboard.min.js')) !!}</script>
   <script>{!! \File::get(base_path('vendor/unisharp/laravel-filemanager/public/js/script.js')) !!}</script>
   {{-- Use the line below instead of the above if you need to cache the script. --}}
+  {{-- <script src="{{ asset('vendor/laravel-filemanager/js/clipboard.min.js') }}"></script> --}}
   {{-- <script src="{{ asset('vendor/laravel-filemanager/js/script.js') }}"></script> --}}
   <script>
     Dropzone.options.uploadForm = {
@@ -298,6 +310,7 @@
       acceptedFiles: "{{ implode(',', $helper->availableMimeTypes()) }}",
       maxFilesize: ({{ $helper->maxUploadSize() }} / 1000)
     }
+    new ClipboardJS('.copyBtn');
   </script>
 </body>
 </html>

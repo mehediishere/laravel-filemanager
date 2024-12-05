@@ -108,6 +108,26 @@ $('#multi_selection_toggle').click(function () {
   }
 });
 
+$(document).keydown(function (e) {
+  if (e.ctrlKey || e.metaKey) {
+    multi_selection_enabled = true;
+    updateMultiSelectToggleIcon();
+  }
+});
+
+$(document).keyup(function (e) {
+  if (!e.ctrlKey && !e.metaKey) {
+    multi_selection_enabled = false;
+    updateMultiSelectToggleIcon();
+  }
+});
+
+function updateMultiSelectToggleIcon() {
+  $('#multi_selection_toggle i')
+      .toggleClass('fa-times', multi_selection_enabled)
+      .toggleClass('fa-check-double', !multi_selection_enabled);
+}
+
 $('#to-previous').click(function () {
   var previous_dir = getPreviousDir();
   if (previous_dir == '') return;
@@ -437,6 +457,29 @@ function loadItems(page) {
       $('#pagination').html('').removeAttr('class');
 
       if (hasItems) {
+        // Separate folders and files
+        var folders = items.filter(function(item) {
+          return !item.is_file; // Folders are not files
+        });
+        var files = items.filter(function(item) {
+          return item.is_file; // Files are items marked as files
+        });
+
+        // Sort files by time in descending order (newest first)
+        if (sort_type === 'time_desc') {
+          files.sort(function(a, b) {
+            return b.time - a.time; // Sorting by time: newest first (descending order)
+          });
+        }else if (sort_type === 'alphabetic_desc') {
+          // Sort alphabetically by item name in descending order (Z-A)
+          files.sort(function(a, b) {
+            return b.name.localeCompare(a.name); // Alphabetical order (Z-A)
+          });
+        }
+
+        // Combine folders and files (folders first, then sorted files)
+        items = folders.concat(files);
+
         $('#content').addClass(response.display);
         $('#pagination').addClass('preserve_actions_space');
 
@@ -483,7 +526,7 @@ function loadItems(page) {
       $('#nav-buttons > ul').removeClass('d-none');
 
       $('#working_dir').val(working_dir);
-      console.log('Current working_dir : ' + working_dir);
+      // console.log('Current working_dir : ' + working_dir);
       var breadcrumbs = [];
       var validSegments = working_dir.split('/').filter(function (e) { return e; });
       validSegments.forEach(function (segment, index) {
@@ -600,9 +643,17 @@ function preview(items) {
       carouselItem.find('.carousel-image').css('width', '50vh').append($('<div>').addClass('mime-icon ico-' + item.icon));
     }
 
-    carouselItem.find('.carousel-label').attr('target', '_blank').attr('href', item.url)
+/*    carouselItem.find('.carousel-label').attr('target', '_blank').attr('href', item.url)
       .text(item.name)
-      .append($('<i class="fas fa-external-link-alt ml-2"></i>'));
+      .append($('<i class="fas fa-external-link-alt ml-2"></i>'));*/
+
+    carouselItem.append('<div class = "d-flex justify-content-center align-items-center flex-column">' +
+        '<div class="input-group p-3" style="width: 60%;">' +
+        '<input type="text" id="img_index_'+index+'" class="form-control" placeholder="URL" value="' + item.url + '">' +
+        '<button class="input-group-text btn copyBtn" data-clipboard-target="#img_index_'+index+'"><i class="fas fa-copy"></i></button>' +
+        '<a class="input-group-text" target="_blank" href="'+ item.url +'"><i class="fas fa-external-link-alt"></i></a>' +
+        '</div>' +
+        '</div>');
 
     carousel.children('.carousel-inner').append(carouselItem);
 
@@ -748,7 +799,7 @@ function use(items) {
       window.close();
     }
   } else {
-    console.log('window.opener not found');
+    // console.log('window.opener not found');
     // No editor found, open/download file using browser's default method
     window.open(url);
   }
