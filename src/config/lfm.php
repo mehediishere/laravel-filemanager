@@ -12,10 +12,17 @@ return [
     /*
     |--------------------------------------------------------------------------
     | Routing
+    | When "true" you can access through route /filemanager without defining in web.php file
+    |
+    | When "false" you'll need the following route to be defined
+    |
+    |    Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
+    |        \UniSharp\LaravelFilemanager\Lfm::routes();
+    |    });
     |--------------------------------------------------------------------------
      */
 
-    'use_package_routes'       => true,
+    'use_package_routes'       => false,
 
     /*
     |--------------------------------------------------------------------------
