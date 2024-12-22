@@ -70,7 +70,7 @@ return [
             ],
         ],
         'image' => [
-            'folder_name'  => 'photos',
+            'folder_name'  => 'images',
             'startup_view' => 'grid',
             'max_size'     => 5000, // size in KB
             'thumb' => true,

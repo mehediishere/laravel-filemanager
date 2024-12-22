@@ -77,7 +77,7 @@ class Lfm
     {
         $type = $this->currentLfmType();
 
-        return $this->config->get('lfm.folder_categories.' . $type . '.folder_name', 'files');
+        return $this->config->get('lfm.folder_categories.' . $type . '.folder_name', 'images');
     }
 
     /**
@@ -87,7 +87,7 @@ class Lfm
      */
     public function currentLfmType()
     {
-        $lfm_type = 'file';
+        $lfm_type = 'image';
 
         $request_type = lcfirst(Str::singular($this->input('type') ?: ''));
         $available_types = array_keys($this->config->get('lfm.folder_categories') ?: []);
